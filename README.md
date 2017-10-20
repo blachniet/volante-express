@@ -1,9 +1,11 @@
-# Volante Express.js Spoke
+# Volante Spoke for Express.js
 
-Volante module for Express.js
+Provides a barebones express.js server for use in a Volante wheel.
 
-Provides a barebones express.js server to use in a Volante wheel by integrating an options event and piping the Express logging into Volante.
+## Features
 
+- allows other Volante Spokes to self-register as middleware
+- express logging emitted as Volante events
 
 ## Usage
 
@@ -11,7 +13,7 @@ Provides a barebones express.js server to use in a Volante wheel by integrating 
 npm install volante-express
 ```
 
-Volante modules are automatically loaded and instanced if they are installed locally and `hub.attachAll()` is called.
+Volante Spokes are automatically loaded and instanced if they are installed locally and `hub.attachAll()` is called.
 
 ## Options
 
