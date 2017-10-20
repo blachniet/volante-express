@@ -1,5 +1,6 @@
 const volante = require('volante');
 const express = require('express');
+const onFinished = require('on-finished');
 
 //
 // Volante module providing an express.js server
@@ -13,6 +14,7 @@ class VolanteExpress extends volante.Spoke {
     this.options = {
       bind: '127.0.0.1',
       port: 3000,
+      logging: true,
       middleware: []
     };
 
@@ -33,16 +35,13 @@ class VolanteExpress extends volante.Spoke {
     this.app = express();
     this.app.disable('x-powered-by');
 
+    // logging middleware
+    this.app.use((req, res, next) => this.loggingMiddleware(req, res, next));
+
     // load user-specified middleware
     for (let mw of this.options.middleware) {
       this.app.use(mw);
     }
-
-    // logging middleware
-    this.app.use(function (req, res, next) {
-      console.log(Date.now());
-      next();
-    });
   }
 
   start() {
@@ -68,6 +67,29 @@ class VolanteExpress extends volante.Spoke {
     });
   }
 
+  //
+  // lightweight-logging middleware which calls the built-in Volante .log() function
+  //
+  loggingMiddleware(req, res, next) {
+    if (this.options.logging) {
+      // starting datum
+      let startAt = process.hrtime();
+
+      // use on-finished module to log when HTTP request is finished
+      onFinished(res, () => {
+        let diff = process.hrtime(startAt);
+        let ms = diff[0] * 1e3 + diff[1] * 1e-6;
+
+        this.log({
+          method: req.method, // HTTP method
+          src: req.ip || req._remoteAddress || (req.connection && req.connection.remoteAddress), // src IP address
+          url: req.originalUrl || req.url, // url
+          ms // response time in milliseconds
+        });
+      });
+    }
+    next();
+  }
 }
 
 //

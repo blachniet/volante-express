@@ -23,6 +23,7 @@ Options are changed using the `volante-express.options` event with an options ob
 hub.emit('volante-express.options', {
   bind: '127.0.0.1',
   port: 3000,
+  logging: true,
   middleware: [
     // array of middleware, e.g.:
     require('compression')()
@@ -37,9 +38,10 @@ hub.emit('volante-express.options', {
 - `volante-express.options` - main options call
   ```js
   {
-    bind: String,
-    port: Number,
-    middleware: Array
+    bind: String,     // bind address
+    port: Number,     // server port
+    logging: Boolean, // emit express log as Volante events
+    middleware: Array // user middleware
   }
   ```
 - `volante-express.use` - .use() call for middleware (enables self-registering volante middleware)
@@ -61,6 +63,18 @@ In addition to native Volante log events, this modules also emits:
   }
   ```
 
+### Logs
+
+Express.js HTTP requests are logged with the following structure:
+
+```js
+{
+  method: String,
+  src: String,
+  url: String,
+  ms: Number
+}
+```
 
 ## Self-registering Middleware
 
