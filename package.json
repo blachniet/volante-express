@@ -1,0 +1,16 @@
+{
+  "name": "volante-express",
+  "version": "1.0.0",
+  "description": "volante module for express.js",
+  "author": "Mike Smiley <msmiley@alumni.rice.edu>",
+  "url": "https://github.com/msmiley/volante-express",
+  "repository": "msmiley/volante-express.git",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.2",
+    "volante": "^1.0.0"
+  },
+  "keywords": [
+    "volante"
+  ]
+}
