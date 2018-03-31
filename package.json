@@ -8,8 +8,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.2",
-    "on-finished": "^2.3.0",
-    "volante": "^1.0.0"
+    "on-finished": "^2.3.0"
   },
   "keywords": [
     "volante"

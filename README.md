@@ -4,8 +4,8 @@ Provides a barebones express.js server for use in a Volante wheel.
 
 ## Features
 
-- allows other Volante Spokes to self-register as middleware
-- express logging emitted as Volante events
+- allows other Volante Spokes to register as Express middleware
+- Express logging emitted as Volante events
 
 ## Usage
 
@@ -17,16 +17,16 @@ Volante Spokes are automatically loaded and instanced if they are installed loca
 
 ## Options
 
-Options are changed using the `volante-express.options` event with an options object:
+Options are changed using the `VolanteExpress.props` event with an object:
 
 ```js
-hub.emit('volante-express.options', {
-  bind: '127.0.0.1',
-  port: 3000,
-  logging: true,
-  middleware: [
-    // array of middleware, e.g.:
-    require('compression')()
+hub.emit('VolanteExpress.props', {
+  bind: '127.0.0.1',               // bind address
+  port: 3000,                      // server port
+  logging: true,                   // emit express log as Volante events
+  middleware: [                    // express middleware
+    // array of middleware, e.g.:  
+    require('compression')()       
   ]
 });
 ```
@@ -35,27 +35,27 @@ hub.emit('volante-express.options', {
 
 ### Handled
 
-- `volante-express.options` - main options call
+- `VolanteExpress.props` - main options call
   ```js
   {
-    bind: String,     // bind address
-    port: Number,     // server port
-    logging: Boolean, // emit express log as Volante events
-    middleware: Array // user middleware
+    bind: String,     
+    port: Number,     
+    logging: Boolean, 
+    middleware: Array 
   }
   ```
-- `volante-express.use` - .use() call for middleware (enables self-registering volante middleware)
+- `VolanteExpress.use` - .use() call for middleware (enables self-registering volante middleware)
   ```js
   Object // middleware object used for .use() call
   ```
-- `volante-express.start` - start the server
-- `volante-express.stop` - stop the server
+- `VolanteExpress.start` - start the server
+- `VolanteExpress.stop` - stop the server
 
 ### Emitted
 
 In addition to native Volante log events, this modules also emits:
 
-- `volante-express.listening'
+- `VolanteExpress.listening'
   ```js
   {
     bind: String,
@@ -78,11 +78,11 @@ Express.js HTTP requests are logged with the following structure:
 
 ## Self-registering Middleware
 
-This module enables self-registering express middleware wrapped as Volante Spoke modules. Note that this will require an initial `volante-express.options` event to kick off the self-registering process.
+This module enables self-registering express middleware wrapped as Volante Spoke modules. Note that this will require an initial `VolanteExpress.props` event to kick off the self-registering process.
 
 ```js
-this.hub.on('volante-express.options', () => {
-  this.hub.emit('volante-express.use', this);
+this.hub.on('VolanteExpress.props', () => {
+  this.hub.emit('VolanteExpress.use', this);
 });
 ```
 
