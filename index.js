@@ -6,11 +6,6 @@ const onFinished = require('on-finished');
 //
 module.exports = {
 	name: 'VolanteExpress',
-  //
-  // volante init()
-  //
-  init() {
-	},
 	events: {
     'VolanteExpress.use'(middleware) {
       this.app && this.app.use(middleware);

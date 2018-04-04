@@ -15,7 +15,7 @@ npm install volante-express
 
 Volante Spokes are automatically loaded and instanced if they are installed locally and `hub.attachAll()` is called.
 
-## Options
+## Props
 
 Options are changed using the `VolanteExpress.props` event with an object:
 
@@ -35,15 +35,6 @@ hub.emit('VolanteExpress.props', {
 
 ### Handled
 
-- `VolanteExpress.props` - main options call
-  ```js
-  {
-    bind: String,     
-    port: Number,     
-    logging: Boolean, 
-    middleware: Array 
-  }
-  ```
 - `VolanteExpress.use` - .use() call for middleware (enables self-registering volante middleware)
   ```js
   Object // middleware object used for .use() call
