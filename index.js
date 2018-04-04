@@ -59,7 +59,7 @@ module.exports = {
 		  });
 
 		  this.server.listen(this.port, this.bind, () => {
-		    this.$hub.emit('volante-express.listening', {
+		    this.$emit('VolanteExpress.listening', {
 		      bind: this.bind,
 		      port: this.port
 		    });
