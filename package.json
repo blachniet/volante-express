@@ -7,6 +7,7 @@
   "repository": "msmiley/volante-express.git",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.16.2",
     "on-finished": "^2.3.0"
   },
