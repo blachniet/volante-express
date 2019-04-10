@@ -106,7 +106,8 @@ module.exports = {
 		  next();
 		},
 		registerCrud(obj) {
-			this.$debug('setting up CRUD bridge between express.js and Volante');
+			this.$debug('setting up simple CRUD bridge between express.js and Volante');
+			this.$debug(`CRUD operations on ${obj.path} will be mapped to ${obj.name}`);
 			if (obj.name && obj.path) {
 				// create
 				this.app.post(obj.path, (req, res) => {
@@ -115,9 +116,15 @@ module.exports = {
 					}
 					res.send('ok');
 				});
-				// read
+				// read all
 				this.app.get(obj.path, (req, res) => {
 					this.$emit(`volante.read`, obj.name, {}, (docs) => {
+						res.send(docs);
+					});
+				});
+				// query (pass body through as query)
+				this.app.post(`${obj.path}/query`, (req, res) => {
+					this.$emit(`volante.read`, obj.name, req.body, (docs) => {
 						res.send(docs);
 					});
 				});
