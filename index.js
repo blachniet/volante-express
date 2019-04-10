@@ -93,12 +93,12 @@ module.exports = {
 		    onFinished(res, () => {
 		      let diff = process.hrtime(startAt);
 		      let ms = diff[0] * 1e3 + diff[1] * 1e-6;
-
 		      this.$log({
 		        method: req.method, // HTTP method
 		        // src IP address
 		        src: req.ip || req._remoteAddress || (req.connection && req.connection.remoteAddress),
 		        url: req.originalUrl || req.url, // url
+		        status: res.statusCode,
 		        ms // response time in milliseconds
 		      });
 		    });
