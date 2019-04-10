@@ -53,6 +53,7 @@ module.exports = {
 
 		  if (this.cors.length > 0) {
 		  	// use cors
+		  	this.$log(`using CORS with ${JSON.stringify(this.cors)}`);
 		  	this.app.use(cors({
 		  		origin: this.cors,
 				}));
