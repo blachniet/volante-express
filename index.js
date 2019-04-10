@@ -20,8 +20,8 @@ module.exports = {
 	  this.app.use((req, res, next) => this.loggingMiddleware(req, res, next));
 	},
 	events: {
-    'VolanteExpress.use'(middleware) {
-      this.app && this.app.use(middleware);
+    'VolanteExpress.use'(...middleware) {
+      this.app && this.app.use(...middleware);
     },
     'VolanteExpress.crud'(obj) {
 			this.registerCrud(obj);
