@@ -1,6 +1,7 @@
 const express = require('express');
 const onFinished = require('on-finished');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 //
 // Volante module providing an express.js server
@@ -11,7 +12,8 @@ module.exports = {
 	  // instantiate the express app
 	  this.app = express();
 	  this.app.disable('x-powered-by');
-	  
+
+		// use json body parsing
 	  this.app.use(bodyParser.json());
 
 	  // add in our custom volante logging middleware
@@ -37,6 +39,7 @@ module.exports = {
     logging: true,
     enableAdminGui: true,
     adminGuiPort: 4000,
+    cors: [],
     middleware: [],
   },
 	methods: {
@@ -46,6 +49,13 @@ module.exports = {
 		  // load user-specified middleware
 		  for (let mw of this.middleware) {
 		    this.app.use(mw);
+		  }
+
+		  if (this.cors.length > 0) {
+		  	// use cors
+		  	this.app.use(cors({
+		  		origin: this.cors,
+				}));
 		  }
 
 		  this.server = require('http').Server(this.app);
@@ -99,32 +109,31 @@ module.exports = {
 			if (obj.name && obj.path) {
 				// create
 				this.app.post(obj.path, (req, res) => {
-					console.log(req.body)
 					if (req.body) {
-						this.$emit(`Volante.create`, obj.name, req.body);
+						this.$emit(`volante.create`, obj.name, req.body);
 					}
 					res.send('ok');
 				});
 				// read
 				this.app.get(obj.path, (req, res) => {
-					this.$emit(`Volante.read`, obj.name, {}, (docs) => {
+					this.$emit(`volante.read`, obj.name, {}, (docs) => {
 						res.send(docs);
 					});
 				});
 				// read by id
 				this.app.get(`${obj.path}/:id`, (req, res) => {
-					this.$emit(`Volante.read`, obj.name, req.params.id, (docs) => {
+					this.$emit(`volante.read`, obj.name, req.params.id, (docs) => {
 						res.send(docs);
 					});
 				});
 				// update
 				this.app.put(`${obj.path}/:id`, (req, res) => {
-					this.$emit(`Volante.update`, obj.name, req.params.id, req.body);
+					this.$emit(`volante.update`, obj.name, req.params.id, req.body);
 					res.send('ok');
 				});
 				// delete
 				this.app.delete(`${obj.path}/:id`, (req, res) => {
-					this.$emit(`Volante.delete`, obj.name, req.params.id);
+					this.$emit(`volante.delete`, obj.name, req.params.id);
 					res.send('ok');
 				});
 	    } else {
