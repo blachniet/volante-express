@@ -45,7 +45,7 @@ module.exports = {
   },
   updated() {
   	if (this.cors.length > 0) {
-  		this.$log(`using CORS with ${JSON.stringify(this.cors)}`);
+  		this.$log('using CORS with', this.cors);
   	}
   },
 	methods: {
@@ -65,7 +65,7 @@ module.exports = {
 		        this.$error(`Port ${this.port} is already in use, is another instance running?`);
 		        break;
 		      default:
-		        this.$error(`unable to open listen port: ${err}`);
+		        this.$error('unable to open listen port', err);
 		    }
 		    this.$shutdown(); // system-wide dealbreaker
 		  });
@@ -106,7 +106,7 @@ module.exports = {
 		        src: req.ip || req._remoteAddress || (req.connection && req.connection.remoteAddress),
 		        url: req.originalUrl || req.url, // url
 		        status: res.statusCode,
-		        ms // response time in milliseconds
+		        ms // response time in milliseconds (don't try to round this, thanks JavaScript)
 		      });
 		    });
 		  }
