@@ -13,6 +13,9 @@ module.exports = {
 	  this.app = express();
 	  this.app.disable('x-powered-by');
 
+		// add cors-checking
+		this.app.use((req, res, next) => this.checkCors(req, res, next));
+
 		// use json body parsing
 	  this.app.use(bodyParser.json());
 
@@ -37,10 +40,13 @@ module.exports = {
     bind: '127.0.0.1',
     port: 3000,
     logging: true,
-    enableAdminGui: true,
-    adminGuiPort: 4000,
     cors: [],
     middleware: [],
+  },
+  updated() {
+  	if (this.cors.length > 0) {
+  		this.$log(`using CORS with ${JSON.stringify(this.cors)}`);
+  	}
   },
 	methods: {
 		start() {
@@ -49,14 +55,6 @@ module.exports = {
 		  // load user-specified middleware
 		  for (let mw of this.middleware) {
 		    this.app.use(mw);
-		  }
-
-		  if (this.cors.length > 0) {
-		  	// use cors
-		  	this.$log(`using CORS with ${JSON.stringify(this.cors)}`);
-		  	this.app.use(cors({
-		  		origin: this.cors,
-				}));
 		  }
 
 		  this.server = require('http').Server(this.app);
@@ -80,6 +78,15 @@ module.exports = {
 		    });
 		    this.$log(`listening in ${this.app.get('env')} mode for HTTP on ${this.bind}:${this.port}`);
 		  });
+		},
+		//
+		// middleware to check cors if it's set. passthrough otherwise
+		checkCors(req, res, next) {
+			if (this.cors.length > 0) {
+				cors({ origin: this.cors })(req, res, next);
+			} else {
+				next();
+			}
 		},
 		//
 		// custom lightweight logging middleware which proxies to the built-in Volante .log() function
