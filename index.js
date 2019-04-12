@@ -120,37 +120,46 @@ module.exports = {
 				// create
 				this.app.post(obj.path, (req, res) => {
 					if (req.body) {
-						this.$emit(`volante.create`, obj.name, req.body);
+						this.$emit(`volante.create`, obj.name, req.body, (err, result) => {
+							if (err) return res.status(500).send(err);
+							res.send(result);
+						});
 					}
-					res.send('ok');
 				});
 				// read all
 				this.app.get(obj.path, (req, res) => {
-					this.$emit(`volante.read`, obj.name, {}, (docs) => {
+					this.$emit(`volante.read`, obj.name, {}, (err, docs) => {
+						if (err) return res.status(500).send(err);
 						res.send(docs);
 					});
 				});
 				// query (pass body through as query)
 				this.app.post(`${obj.path}/query`, (req, res) => {
-					this.$emit(`volante.read`, obj.name, req.body, (docs) => {
+					this.$emit(`volante.read`, obj.name, req.body, (err, docs) => {
+						if (err) return res.status(500).send(err);
 						res.send(docs);
 					});
 				});
 				// read by id
 				this.app.get(`${obj.path}/:id`, (req, res) => {
-					this.$emit(`volante.read`, obj.name, req.params.id, (docs) => {
+					this.$emit(`volante.read`, obj.name, req.params.id, (err, docs) => {
+						if (err) return res.status(500).send(err);
 						res.send(docs);
 					});
 				});
 				// update
 				this.app.put(`${obj.path}/:id`, (req, res) => {
-					this.$emit(`volante.update`, obj.name, req.params.id, req.body);
-					res.send('ok');
+					this.$emit(`volante.update`, obj.name, req.params.id, req.body, (err, result) => {
+						if (err) return res.status(500).send(err);
+						res.send(result);
+					});
 				});
 				// delete
 				this.app.delete(`${obj.path}/:id`, (req, res) => {
-					this.$emit(`volante.delete`, obj.name, req.params.id);
-					res.send('ok');
+					this.$emit(`volante.delete`, obj.name, req.params.id, (err, result) => {
+						if (err) return res.status(500).send(err);
+						res.send(result);
+					});
 				});
 	    } else {
 	    	this.warn('registerCrud called without required parameters');
