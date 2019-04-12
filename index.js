@@ -24,6 +24,7 @@ module.exports = {
 	},
 	events: {
     'VolanteExpress.use'(...middleware) {
+    	this.$debug('adding middleware through event');
       this.app && this.app.use(...middleware);
     },
     'VolanteExpress.crud'(obj) {
