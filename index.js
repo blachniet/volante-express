@@ -22,6 +22,10 @@ module.exports = {
 	  // add in our custom volante logging middleware
 	  this.app.use((req, res, next) => this.loggingMiddleware(req, res, next));
 	},
+	done() {
+		this.$debug('closing server');
+		this.server.close();
+	},
 	events: {
     'VolanteExpress.use'(...middleware) {
     	this.$debug('adding middleware through event');
@@ -69,6 +73,10 @@ module.exports = {
 		        this.$error('unable to open listen port', err);
 		    }
 		    this.$shutdown(); // system-wide dealbreaker
+		  });
+
+		  this.server.on('close', () => {
+		  	this.$log('closed http server');
 		  });
 
 			// start
