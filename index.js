@@ -44,6 +44,9 @@ module.exports = {
 	props: {
     bind: '127.0.0.1',
     port: 3000,
+    https: false,
+    key: null,
+    cert: null,
     logging: true,
     cors: [],
     middleware: [],
@@ -62,7 +65,15 @@ module.exports = {
 		    this.app.use(mw);
 		  }
 
-		  this.server = require('http').Server(this.app);
+			if (this.https && this.key && this.cert) {
+				let options = {
+					key: this.key,
+					cert: this.cert,
+				};
+				this.server = require('https').createServer(options, this.app);
+			} else {
+			  this.server = require('http').createServer(this.app);
+			}
 
 		  this.server.on('error', (err) => {
 		    switch (err.code) {
@@ -76,7 +87,7 @@ module.exports = {
 		  });
 
 		  this.server.on('close', () => {
-		  	this.$log('closed http server');
+		  	this.$log(`closed ${this.https?'HTTPS':'HTTP'} server`);
 		  });
 
 			// start
@@ -85,7 +96,7 @@ module.exports = {
 		      bind: this.bind,
 		      port: this.port
 		    });
-		    this.$log(`listening in ${this.app.get('env')} mode for HTTP on ${this.bind}:${this.port}`);
+		    this.$log(`listening in ${this.app.get('env')} mode for ${this.https?'HTTPS':'HTTP'} on ${this.bind}:${this.port}`);
 		  });
 		},
 		//
@@ -121,6 +132,9 @@ module.exports = {
 		  }
 		  next();
 		},
+		//
+		// add routes for a generic CRUD bridge between express and volante
+		//
 		registerCrud(obj) {
 			this.$debug('setting up simple CRUD bridge between express.js and Volante');
 			this.$debug(`CRUD operations on ${obj.path} will be mapped to ${obj.name}`);

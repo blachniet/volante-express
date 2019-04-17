@@ -23,10 +23,14 @@ Options are changed using the `VolanteExpress.props` event with an object:
 hub.emit('VolanteExpress.props', {
   bind: '127.0.0.1',               // bind address
   port: 3000,                      // server port
+  https: false,                    // enable https mode
+  cert: null,                      // tls certificate
+  key: null,                       // tls private key
   logging: true,                   // emit express log as Volante events
+  cors: []                         // CORS entries, adding to array enables cors
   middleware: [                    // express middleware
-    // array of middleware, e.g.:  
-    require('compression')()       
+    // array of express middleware, e.g.:
+    require('compression')()
   ]
 });
 ```
@@ -38,6 +42,13 @@ hub.emit('VolanteExpress.props', {
 - `VolanteExpress.use` - .use() call for middleware (enables self-registering volante middleware)
   ```js
   Object // middleware object used for .use() call
+  ```
+- `VolanteExpress.crud` - enable crud bridge
+  ```js
+  {
+    name: String, // name/collection/table/directory used for datasource
+    path: String, // http path to apply CRUD (e.g. .get('/'), etc)
+  }
   ```
 - `VolanteExpress.start` - start the server
 - `VolanteExpress.stop` - stop the server
@@ -63,16 +74,17 @@ Express.js HTTP requests are logged with the following structure:
   method: String,
   src: String,
   url: String,
+  status: Number,
   ms: Number
 }
 ```
 
 ## Self-registering Middleware
 
-This module enables self-registering express middleware wrapped as Volante Spoke modules. Note that this will require an initial `VolanteExpress.props` event to kick off the self-registering process.
+This module enables self-registering express middleware wrapped as Volante Spoke modules. Note that this will require an initial `VolanteExpress.update` event to kick off the self-registering process.
 
 ```js
-this.hub.on('VolanteExpress.props', () => {
+this.hub.on('VolanteExpress.update', () => {
   this.hub.emit('VolanteExpress.use', this);
 });
 ```
