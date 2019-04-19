@@ -23,8 +23,10 @@ module.exports = {
 	  this.app.use((req, res, next) => this.loggingMiddleware(req, res, next));
 	},
 	done() {
-		this.$debug('closing server');
-		this.server.close();
+		if (this.server) {
+			this.$debug('closing server');
+			this.server.close();
+		}
 	},
 	events: {
     'VolanteExpress.use'(...middleware) {
