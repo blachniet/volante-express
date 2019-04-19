@@ -16,17 +16,17 @@ module.exports = {
 		// add cors-checking
 		this.app.use((req, res, next) => this.checkCors(req, res, next));
 
-		// use json body parsing
+		// add body parsing
 	  this.app.use(bodyParser.json());
+	  this.app.use(bodyParser.urlencoded({ extended: true }));
+	  this.app.use(bodyParser.text());
 
 	  // add in our custom volante logging middleware
 	  this.app.use((req, res, next) => this.loggingMiddleware(req, res, next));
 	},
 	done() {
-		if (this.server) {
-			this.$debug('closing server');
-			this.server.close();
-		}
+		this.$debug('closing server');
+		this.server.close();
 	},
 	events: {
     'VolanteExpress.use'(...middleware) {
