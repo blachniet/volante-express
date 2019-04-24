@@ -96,7 +96,8 @@ module.exports = {
 		  this.server.listen(this.port, this.bind, () => {
 		    this.$emit('VolanteExpress.listening', {
 		      bind: this.bind,
-		      port: this.port
+		      port: this.port,
+		      server: this.server,
 		    });
 		    this.$log(`listening in ${this.app.get('env')} mode for ${this.https?'HTTPS':'HTTP'} on ${this.bind}:${this.port}`);
 		  });
