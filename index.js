@@ -67,6 +67,12 @@ module.exports = {
 		    this.app.use(mw);
 		  }
 
+    	// add error handler middleware just before starting
+    	this.$debug('adding default error handler');
+    	this.app.use((err, req, res, next) => {
+    		this.errorMiddleware(err, req, res);
+  		});
+
 			if (this.https && this.key && this.cert) {
 				let options = {
 					key: this.key,
@@ -136,6 +142,25 @@ module.exports = {
 		  next();
 		},
 		//
+		// add error handling middleware
+		//
+		errorMiddleware(err, req, res) {
+			if (this.logging) {
+				this.$error({
+	        method: req.method, // HTTP method
+	        // src IP address
+	        src: req.ip || req._remoteAddress || (req.connection && req.connection.remoteAddress),
+	        url: req.originalUrl || req.url, // url
+	        err
+	      });
+			}
+			if (err.statusCode) {
+				res.status(err.statusCode).send();
+			} else {
+				res.status(500).send();
+			}
+		},
+		//
 		// add routes for a generic CRUD bridge between express and volante
 		//
 		registerCrud(obj) {
@@ -145,7 +170,7 @@ module.exports = {
 				// create
 				this.app.post(obj.path, (req, res) => {
 					if (req.body) {
-						this.$emit(`volante.create`, obj.name, req.body, (err, result) => {
+						this.$emit('volante.create', obj.name, req.body, (err, result) => {
 							if (err) return res.status(500).send(err);
 							res.send(result);
 						});
@@ -153,35 +178,35 @@ module.exports = {
 				});
 				// read all
 				this.app.get(obj.path, (req, res) => {
-					this.$emit(`volante.read`, obj.name, {}, (err, docs) => {
+					this.$emit('volante.read', obj.name, {}, (err, docs) => {
 						if (err) return res.status(500).send(err);
 						res.send(docs);
 					});
 				});
 				// query (pass body through as query)
 				this.app.post(`${obj.path}/query`, (req, res) => {
-					this.$emit(`volante.read`, obj.name, req.body, (err, docs) => {
+					this.$emit('volante.read', obj.name, req.body, (err, docs) => {
 						if (err) return res.status(500).send(err);
 						res.send(docs);
 					});
 				});
 				// read by id
 				this.app.get(`${obj.path}/:id`, (req, res) => {
-					this.$emit(`volante.read`, obj.name, req.params.id, (err, docs) => {
+					this.$emit('volante.read', obj.name, req.params.id, (err, docs) => {
 						if (err) return res.status(500).send(err);
 						res.send(docs);
 					});
 				});
 				// update
 				this.app.put(`${obj.path}/:id`, (req, res) => {
-					this.$emit(`volante.update`, obj.name, req.params.id, req.body, (err, result) => {
+					this.$emit('volante.update', obj.name, req.params.id, req.body, (err, result) => {
 						if (err) return res.status(500).send(err);
 						res.send(result);
 					});
 				});
 				// delete
 				this.app.delete(`${obj.path}/:id`, (req, res) => {
-					this.$emit(`volante.delete`, obj.name, req.params.id, (err, result) => {
+					this.$emit('volante.delete', obj.name, req.params.id, (err, result) => {
 						if (err) return res.status(500).send(err);
 						res.send(result);
 					});

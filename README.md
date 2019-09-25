@@ -17,10 +17,10 @@ Volante Spokes are automatically loaded and instanced if they are installed loca
 
 ## Props
 
-Options are changed using the `VolanteExpress.props` event with an object:
+Options are changed using the `VolanteExpress.update` event with an object:
 
 ```js
-hub.emit('VolanteExpress.props', {
+hub.emit('VolanteExpress.update', {
   bind: '127.0.0.1',               // bind address
   port: 3000,                      // server port
   https: false,                    // enable https mode
