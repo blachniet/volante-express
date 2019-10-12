@@ -52,6 +52,7 @@ module.exports = {
     logging: true,
     cors: [],
     middleware: [],
+    errorOnBindFail: true,
   },
   updated() {
   	if (this.cors.length > 0) {
@@ -84,14 +85,18 @@ module.exports = {
 			}
 
 		  this.server.on('error', (err) => {
-		    switch (err.code) {
-		      case 'EADDRINUSE':
-		        this.$error(`Port ${this.port} is already in use, is another instance running?`);
-		        break;
-		      default:
-		        this.$error('unable to open listen port', err);
-		    }
-		    this.$shutdown(); // system-wide dealbreaker
+		  	if (this.errorOnBindFail) {
+			    switch (err.code) {
+			      case 'EADDRINUSE':
+			        this.$error(`Port ${this.port} is already in use, is another instance running?`);
+			        break;
+			      default:
+			        this.$error('unable to open listen port', err);
+			    }
+			    this.$shutdown(); // system-wide dealbreaker
+		  	} else {
+		  		this.$warn("Couldn't bind ${this.port}");
+		  	}
 		  });
 
 		  this.server.on('close', () => {
