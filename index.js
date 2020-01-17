@@ -97,7 +97,7 @@ module.exports = {
 			    }
 			    this.$shutdown(); // system-wide dealbreaker
 		  	} else {
-		  		this.$warn("Couldn't bind ${this.port}");
+		  		this.$warn(`Couldn't bind ${this.port}`);
 		  	}
 		  });
 
