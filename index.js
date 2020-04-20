@@ -16,7 +16,7 @@ module.exports = {
 		// add cors-checking
 		this.app.use((req, res, next) => this.checkCors(req, res, next));
 
-		// add body parsing
+		// add the typical body parsing
 	  this.app.use(bodyParser.json());
 	  this.app.use(bodyParser.urlencoded({ extended: true }));
 	  this.app.use(bodyParser.text());
@@ -136,7 +136,7 @@ module.exports = {
 		    onFinished(res, () => {
 		      let diff = process.hrtime(startAt);
 		      let ms = diff[0] * 1e3 + diff[1] * 1e-6;
-		      this.$log({
+		      this.$log('express log', {
 		        method: req.method, // HTTP method
 		        // src IP address
 		        src: req.ip || req._remoteAddress || (req.connection && req.connection.remoteAddress),
@@ -153,7 +153,7 @@ module.exports = {
 		//
 		errorMiddleware(err, req, res) {
 			if (this.logging) {
-				this.$error({
+				this.$error('express error', {
 	        method: req.method, // HTTP method
 	        // src IP address
 	        src: req.ip || req._remoteAddress || (req.connection && req.connection.remoteAddress),
