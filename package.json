@@ -1,6 +1,6 @@
 {
   "name": "volante-express",
-  "version": "2.8.1",
+  "version": "2.9.0",
   "description": "volante module for express.js",
   "author": "Mike Smiley <msmiley@alumni.rice.edu>",
   "url": "https://github.com/msmiley/volante-express",
