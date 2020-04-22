@@ -224,3 +224,24 @@ module.exports = {
 		},
 	},
 };
+
+if (require.main === module) {
+	console.log('running test volante wheel');
+	const volante = require('volante');
+
+	let hub = new volante.Hub().debug();
+	hub.attachAll().attachFromObject(module.exports);
+	
+	hub.emit('VolanteExpress.update', {
+		port: 3000,
+		errorOnBindFail: false,
+		middleware: [
+			(req, res) => {
+				res.send('<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:32px;font-family:sans-serif;font-weight:300;"><span>hello from volante-express</span><span>❤︎</span></div>');
+			}
+		],
+	});
+	
+	hub.emit('VolanteExpress.start');
+
+}
