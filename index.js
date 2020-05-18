@@ -17,7 +17,7 @@ module.exports = {
 		this.app.use((req, res, next) => this.checkCors(req, res, next));
 
 		// add the typical body parsing
-	  this.app.use(bodyParser.json());
+	  this.app.use(bodyParser.json({ limit: '100mb' }));
 	  this.app.use(bodyParser.urlencoded({ extended: true }));
 	  this.app.use(bodyParser.text());
 
@@ -119,7 +119,7 @@ module.exports = {
 		// middleware to check cors if it's set. passthrough otherwise
 		checkCors(req, res, next) {
 			if (this.cors.length > 0) {
-				cors({ origin: this.cors })(req, res, next);
+				cors({ origin: this.cors, credentials: true })(req, res, next);
 			} else {
 				next();
 			}
