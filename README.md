@@ -50,7 +50,7 @@ hub.emit('VolanteExpress.update', {
     path: String, // http path to apply CRUD (e.g. .get('/'), etc)
   }
   ```
-- `VolanteExpress.start` - start the server
+- `VolanteExpress.start` - start the server (call this LAST, after all middleware has been added)
 - `VolanteExpress.stop` - stop the server
 
 ### Emitted
