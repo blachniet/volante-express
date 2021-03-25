@@ -14,12 +14,15 @@ module.exports = {
     this.app.disable('x-powered-by');
 
     // add cors-checking
+    if (this.cors.length > 0) {
+      this.$log('using CORS with', this.cors);
+    }
     this.app.use((req, res, next) => this.checkCors(req, res, next));
 
     // add the typical body parsing
-    this.app.use(bodyParser.json({ limit: '100mb' }));
+    this.app.use(bodyParser.json({ limit: this.bodyParserLimit }));
     this.app.use(bodyParser.urlencoded({ extended: true }));
-    this.app.use(bodyParser.text());
+    this.app.use(bodyParser.text({ limit: this.bodyParserLimit }));
 
     // add in our custom volante logging middleware
     this.app.use((req, res, next) => this.loggingMiddleware(req, res, next));
@@ -55,11 +58,7 @@ module.exports = {
     cors: [],
     middleware: [],
     errorOnBindFail: true,
-  },
-  updated() {
-    if (this.cors.length > 0) {
-      this.$log('using CORS with', this.cors);
-    }
+    bodyParserLimit: '100mb',
   },
   methods: {
     start() {
@@ -232,7 +231,7 @@ if (require.main === module) {
 
   let hub = new volante.Hub().debug();
   hub.attachAll().attachFromObject(module.exports);
-  
+
   hub.emit('VolanteExpress.update', {
     port: 3000,
     errorOnBindFail: false,
@@ -242,7 +241,7 @@ if (require.main === module) {
       }
     ],
   });
-  
+
   hub.emit('VolanteExpress.start');
 
 }
