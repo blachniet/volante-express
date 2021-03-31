@@ -14,9 +14,7 @@ module.exports = {
     this.app.disable('x-powered-by');
 
     // add cors-checking
-    if (this.cors.length > 0) {
-      this.$log('using CORS with', this.cors);
-    }
+    this.$log('using CORS with', this.cors);
     this.app.use((req, res, next) => this.checkCors(req, res, next));
 
     // add the typical body parsing
@@ -55,7 +53,7 @@ module.exports = {
     key: null,
     cert: null,
     logging: true,
-    cors: [],
+    cors: '*',
     middleware: [],
     errorOnBindFail: true,
     bodyParserLimit: '100mb',
@@ -118,11 +116,7 @@ module.exports = {
     //
     // middleware to check cors if it's set. passthrough otherwise
     checkCors(req, res, next) {
-      if (this.cors.length > 0) {
-        cors({ origin: this.cors, credentials: true })(req, res, next);
-      } else {
-        next();
-      }
+      cors({ origin: this.cors, credentials: true })(req, res, next);
     },
     //
     // custom lightweight logging middleware which proxies to the built-in Volante .log() function
