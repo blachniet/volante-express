@@ -63,6 +63,8 @@ module.exports = {
       for (let mw of this.middleware) {
         this.app.use(mw);
       }
+      // emit a pre-start event for other spoke modules to register their
+      // middleware
       this.$emit('VolanteExpress.pre-start', this.app);
 
       // add error handler middleware just before starting
@@ -181,4 +183,9 @@ if (require.main === module) {
   });
 
   hub.emit('VolanteExpress.start');
+
+  // test the call to $ready
+  hub.on('VolanteExpress.ready', () => {
+    console.log('express called .$ready()');
+  });
 }

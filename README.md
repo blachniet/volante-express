@@ -1,10 +1,10 @@
 # Volante Spoke for Express.js
 
-Provides a barebones express.js server for use in a Volante wheel.
+Neatly encapsulates an express.js server for use in a Volante wheel.
 
 ## Features
 
-- allows other Volante Spokes to register as Express middleware
+- allows other Volante Spokes to register their Express middleware
 - Express logging emitted as Volante events
 
 ## Usage
@@ -35,6 +35,8 @@ hub.emit('VolanteExpress.update', {
 });
 ```
 
+or specify any of the above in a `config.json` file as fields under a `VolanteExpress` object and pass it to the hub: `hub.loadConfig('config.json')`.
+
 ## Events
 
 ### Handled
@@ -43,13 +45,6 @@ hub.emit('VolanteExpress.update', {
   ```js
   Object // middleware object used for .use() call
   ```
-- `VolanteExpress.crud` - enable crud bridge
-  ```js
-  {
-    name: String, // name/collection/table/directory used for datasource
-    path: String, // http path to apply CRUD (e.g. .get('/'), etc)
-  }
-  ```
 - `VolanteExpress.start` - start the server (call this LAST, after all middleware has been added)
 - `VolanteExpress.stop` - stop the server
 
@@ -57,13 +52,15 @@ hub.emit('VolanteExpress.update', {
 
 In addition to native Volante log events, this modules also emits:
 
-- `VolanteExpress.listening'
+- `VolanteExpress.pre-start(app)` - preferred way for other spokes to register their middleware, example:
   ```js
-  {
-    bind: String,
-    port: Number
+  events: {
+    'VolanteExpress.pre-start'(app) {
+      app.use(this.localRouter);
+    }
   }
   ```
+- `VolanteExpress.listening({ bind: String, port: Number})`
 
 ### Logs
 
@@ -77,16 +74,6 @@ Express.js HTTP requests are logged with the following structure:
   status: Number,
   ms: Number
 }
-```
-
-## Self-registering Middleware
-
-This module enables self-registering express middleware wrapped as Volante Spoke modules. Note that this will require an initial `VolanteExpress.update` event to kick off the self-registering process.
-
-```js
-this.hub.on('VolanteExpress.update', () => {
-  this.hub.emit('VolanteExpress.use', this);
-});
 ```
 
 ## License
