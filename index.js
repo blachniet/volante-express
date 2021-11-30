@@ -171,7 +171,8 @@ if (require.main === module) {
   hub.attachAll().attachFromObject(module.exports);
 
   hub.emit('VolanteExpress.update', {
-    port: 3000,
+    bind: '0.0.0.0',
+    port: 8080,
     middleware: [
       (req, res) => {
         res.send('<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:32px;font-family:sans-serif;font-weight:300;"><span>hello from volante-express</span><span>❤︎</span></div>');
