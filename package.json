@@ -16,8 +16,8 @@
     "on-finished": "^2.3.0"
   },
   "devDependencies": {
-    "volante": "^4.0.0",
-    "volante-console": "^3.0.1"
+    "volante": "^4.1.1",
+    "volante-console": "^3.2.0"
   },
   "keywords": [
     "volante"

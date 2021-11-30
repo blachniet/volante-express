@@ -91,7 +91,7 @@ module.exports = {
           port: this.port,
           server: this.server,
         });
-        this.$log(`listening in ${this.app.get('env')} mode for ${this.https?'HTTPS':'HTTP'} on ${this.bind}:${this.port}`);
+        this.$ready(`listening in ${this.app.get('env')} mode for ${this.https?'HTTPS':'HTTP'} on ${this.bind}:${this.port}`);
       });
     },
     handleExpressError(err) {
