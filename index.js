@@ -1,4 +1,5 @@
 const express = require('express');
+const socketIo = require('socket.io');
 const onFinished = require('on-finished');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -19,6 +20,7 @@ module.exports = {
     middleware: [],           // middleware array, for manually entered (see test code at bottom)
     errorOnBindFail: true,    // flag for whether this module should request a shutdown if it can't bind
     bodyParserLimit: '100mb', // body parser size limit
+    enableSocketIo: true,     // enable socket.io
   },
   init() {
     // instantiate the express app
@@ -42,6 +44,12 @@ module.exports = {
       this.$debug('closing server');
       this.server.close();
     }
+  },
+  data() {
+    return {
+      app: null, // the express app
+      io: null,  // handle to socket.io
+    };
   },
   events: {
     'VolanteExpress.use'(...middleware) {
@@ -94,7 +102,25 @@ module.exports = {
           server: this.server,
         });
         this.$ready(`listening in ${this.app.get('env')} mode for ${this.https?'HTTPS':'HTTP'} on ${this.bind}:${this.port}`);
+        // start socket.io if enabled
+        if (this.enableSocketIo) {
+          this.startSocketIo();
+        }
       });
+    },
+    //
+    // start socket io server
+    //
+    startSocketIo() {
+      this.$log('starting socket.io');
+      this.io = socketIo(this.server, {
+        path: '/socket.io',
+        cors: {
+          origin: this.cors,
+        },
+      });
+      // let clients access io to attach their own handlers
+      this.$emit('VolanteExpress.socket.io', this.io);
     },
     handleExpressError(err) {
       if (this.errorOnBindFail) {
@@ -176,9 +202,7 @@ if (require.main === module) {
     bind: '0.0.0.0',
     port: 8080,
     middleware: [
-      (req, res) => {
-        res.send('<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:32px;font-family:sans-serif;font-weight:300;"><span>hello from volante-express</span><span>❤︎</span></div>');
-      }
+      express.static(__dirname + '/test'),
     ],
   });
 
@@ -187,5 +211,13 @@ if (require.main === module) {
   // test the call to $ready
   hub.on('VolanteExpress.ready', () => {
     console.log('express called .$ready()');
+  });
+  hub.on('VolanteExpress.socket.io', (io) => {
+    io.on('connection', (client) => {
+      console.log('client connected by socket.io');
+      setInterval(() => {
+        client.emit('theTime', new Date().toISOString());
+      }, 1000);
+    });
   });
 }

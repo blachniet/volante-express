@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Volante Express</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/app.js"></script>
+  </head>
+  <body>
+    <div id="wrapper">
+      <span>hello from volante-express</span>
+      <span>❤︎</span>
+      <div id="time">waiting for socket.io...</div>
+    </div>
+  </body>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+    #wrapper {
+      background-color: #323334;
+      color: #ccc;
+      height: 100%;
+      display:flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      font-weight: 100;
+      font-size: 4em;
+      font-family: "Helvetica Neue", sans-serif;
+    }
+    #time {
+      font-size: 0.5em;
+      margin-top: 1em;
+    }
+  </style>
+</html>
