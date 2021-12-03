@@ -18,8 +18,8 @@
     "socket.io-client": "^4.4.0"
   },
   "devDependencies": {
-    "volante": "^4.2.0",
-    "volante-console": "^3.2.0"
+    "volante": "^5.0.0",
+    "volante-console": "^4.0.0"
   },
   "keywords": [
     "volante"

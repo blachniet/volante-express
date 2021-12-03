@@ -22,6 +22,10 @@ module.exports = {
     bodyParserLimit: '100mb', // body parser size limit
     enableSocketIo: true,     // enable socket.io
   },
+  stats: {
+    totalRequests: 0,         // total number of requests made
+    numSocketIoClients: 0,    // current number of connected socket.io clients
+  },
   init() {
     // instantiate the express app
     this.app = express();
@@ -119,6 +123,13 @@ module.exports = {
           origin: this.cors,
         },
       });
+      // maintain the client count stat
+      this.io.on('connection', (socket) => {
+        this.numSocketIoClients++;
+        socket.on("disconnect", () => {
+          this.numSocketIoClients--;
+        });
+      });
       // let clients access io to attach their own handlers
       this.$emit('VolanteExpress.socket.io', this.io);
     },
@@ -155,6 +166,7 @@ module.exports = {
 
         // use on-finished module to log when HTTP request is finished
         onFinished(res, () => {
+          this.totalRequests++;
           let diff = process.hrtime(startAt);
           let ms = diff[0] * 1e3 + diff[1] * 1e-6;
           this.$log('express log', {
@@ -214,7 +226,6 @@ if (require.main === module) {
   });
   hub.on('VolanteExpress.socket.io', (io) => {
     io.on('connection', (client) => {
-      console.log('client connected by socket.io');
       setInterval(() => {
         client.emit('theTime', new Date().toISOString());
       }, 1000);
