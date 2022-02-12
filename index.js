@@ -19,6 +19,7 @@ module.exports = {
     cors: '*',                // cors origin, see https://www.npmjs.com/package/cors#configuration-options
     middleware: [],           // middleware array, for manually entered (see test code at bottom)
     errorOnBindFail: true,    // flag for whether this module should request a shutdown if it can't bind
+    enableBodyParser: true,
     bodyParserLimit: '100mb', // body parser size limit
     enableSocketIo: true,     // enable socket.io
   },
@@ -36,9 +37,11 @@ module.exports = {
     this.app.use((req, res, next) => this.checkCors(req, res, next));
 
     // add the typical body parsing
-    this.app.use(bodyParser.json({ limit: this.bodyParserLimit }));
-    this.app.use(bodyParser.urlencoded({ extended: true }));
-    this.app.use(bodyParser.text({ limit: this.bodyParserLimit }));
+    if (this.enableBodyParser) {
+      this.app.use(bodyParser.json({ limit: this.bodyParserLimit }));
+      this.app.use(bodyParser.urlencoded({ extended: true }));
+      this.app.use(bodyParser.text({ limit: this.bodyParserLimit }));
+    }
 
     // add in our custom volante logging middleware
     this.app.use((req, res, next) => this.loggingMiddleware(req, res, next));
