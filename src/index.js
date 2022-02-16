@@ -1,7 +1,5 @@
 const express = require('express');
 const socketIo = require('socket.io');
-const onFinished = require('on-finished');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 
 //
@@ -19,7 +17,7 @@ module.exports = {
     cors: '*',                // cors origin, see https://www.npmjs.com/package/cors#configuration-options
     middleware: [],           // middleware array, for manually entered (see test code at bottom)
     errorOnBindFail: true,    // flag for whether this module should request a shutdown if it can't bind
-    enableBodyParser: true,
+    enableBodyParser: true,   // flag for switching body-parser on and off
     bodyParserLimit: '100mb', // body parser size limit
     enableSocketIo: true,     // enable socket.io
   },
@@ -31,6 +29,11 @@ module.exports = {
     // instantiate the express app
     this.app = express();
     this.app.disable('x-powered-by');
+    // update totalRequests stat every time we hit
+    this.app.use((req, res, next) => {
+      this.totalRequests++;
+      next();
+    });
 
     // add cors-checking
     this.$log('using CORS with', this.cors);
@@ -38,9 +41,9 @@ module.exports = {
 
     // add the typical body parsing
     if (this.enableBodyParser) {
-      this.app.use(bodyParser.json({ limit: this.bodyParserLimit }));
-      this.app.use(bodyParser.urlencoded({ extended: true }));
-      this.app.use(bodyParser.text({ limit: this.bodyParserLimit }));
+      this.app.use(express.json({ limit: this.bodyParserLimit }));
+      this.app.use(express.urlencoded({ limit: this.bodyParserLimit, extended: true }));
+      this.app.use(express.text({ limit: this.bodyParserLimit }));
     }
 
     // add in our custom volante logging middleware
@@ -167,9 +170,8 @@ module.exports = {
         // starting datum
         let startAt = process.hrtime();
 
-        // use on-finished module to log when HTTP request is finished
-        onFinished(res, () => {
-          this.totalRequests++;
+        // use log when HTTP request is closed
+        res.on('close', () => {
           let diff = process.hrtime(startAt);
           let ms = diff[0] * 1e3 + diff[1] * 1e-6;
           this.$log('express log', {
@@ -205,33 +207,3 @@ module.exports = {
     },
   },
 };
-
-if (require.main === module) {
-  console.log('running test volante wheel');
-  const volante = require('volante');
-
-  let hub = new volante.Hub().debug();
-  hub.attachAll().attachFromObject(module.exports);
-
-  hub.emit('VolanteExpress.update', {
-    bind: '0.0.0.0',
-    port: 8080,
-    middleware: [
-      express.static(__dirname + '/test'),
-    ],
-  });
-
-  hub.emit('VolanteExpress.start');
-
-  // test the call to $ready
-  hub.on('VolanteExpress.ready', () => {
-    console.log('express called .$ready()');
-  });
-  hub.on('VolanteExpress.socket.io', (io) => {
-    io.on('connection', (client) => {
-      setInterval(() => {
-        client.emit('theTime', new Date().toISOString());
-      }, 1000);
-    });
-  });
-}

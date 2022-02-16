@@ -1,0 +1,18 @@
+{
+  "name": "ExpressTest",
+  "debug": true,
+  "attach": [
+    "volante-console"
+  ],
+  "attachLocal": [
+    "./src",
+    "./example/example"
+  ],
+  "VolanteExpress": {
+    "bind": "0.0.0.0",
+    "port": 8080
+  },
+  "VolanteConsole": {
+    "statsDumpFrom": ["VolanteExpress"]
+  }
+}

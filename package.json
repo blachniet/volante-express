@@ -6,20 +6,19 @@
   "url": "https://github.com/msmiley/volante-express",
   "repository": "msmiley/volante-express.git",
   "license": "ISC",
+  "main": "./src",
   "scripts": {
-    "test": "node ./index.js"
+    "dev": "node example/index.js"
   },
   "dependencies": {
-    "body-parser": "^1.19.0",
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "on-finished": "^2.3.0",
-    "socket.io": "^4.4.0",
-    "socket.io-client": "^4.4.0"
+    "cors": "2.8.5",
+    "express": "4.17.2",
+    "socket.io": "4.4.1",
+    "socket.io-client": "4.4.1"
   },
   "devDependencies": {
-    "volante": "^5.0.0",
-    "volante-console": "^4.0.0"
+    "volante": "^6.3.0",
+    "volante-console": "^4.1.0"
   },
   "keywords": [
     "volante"
