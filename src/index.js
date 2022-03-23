@@ -81,9 +81,9 @@ module.exports = {
       for (let mw of this.middleware) {
         this.app.use(mw);
       }
-      // emit a pre-start event for other spoke modules to register their
-      // middleware
-      this.$emit('VolanteExpress.pre-start', this.app);
+      // emit an event for other spoke modules to access the app
+      // for registering middleware
+      this.$emit('VolanteExpress.app', this.app);
 
       // emit a convenience event letting other modules
       // call the provided function to get a router that's
@@ -115,11 +115,13 @@ module.exports = {
 
       // start express
       this.server.listen(this.port, this.bind, () => {
+        // this event mainly meant for access to server object
         this.$emit('VolanteExpress.listening', {
           bind: this.bind,
           port: this.port,
           server: this.server,
         });
+        // note that $ready emits a VolanteExpress.ready event
         this.$ready(`listening in ${this.app.get('env')} mode for ${this.https?'HTTPS':'HTTP'} on ${this.bind}:${this.port}`);
         // start socket.io if enabled
         if (this.enableSocketIo) {
