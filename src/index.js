@@ -85,6 +85,15 @@ module.exports = {
       // middleware
       this.$emit('VolanteExpress.pre-start', this.app);
 
+      // emit a convenience event letting other modules
+      // call the provided function to get a router that's
+      // been attached to express and is ready to go
+      this.$emit('VolanteExpress.router', () => {
+        let r = express.Router();
+        this.app.use(r);
+        return r;
+      });
+
       // add error handler middleware just before starting
       this.$debug('adding default error handler');
       this.app.use(this.errorMiddleware);
