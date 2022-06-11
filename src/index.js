@@ -20,7 +20,7 @@ module.exports = {
     enableBodyParser: true,   // flag for switching body-parser on and off
     bodyParserLimit: '100mb', // body parser size limit
     enableSocketIo: true,     // enable socket.io
-    autoStart: false,         // enable auto-start at init time
+    autoStart: false,         // enable auto-start (only when loadConfig is used)
   },
   stats: {
     totalRequests: 0,         // total number of requests made
@@ -49,11 +49,6 @@ module.exports = {
 
     // add in our custom volante logging middleware
     this.app.use((req, res, next) => this.loggingMiddleware(req, res, next));
-
-    // trigger a start if autoStart == true
-    if (this.autoStart) {
-      this.$emit('VolanteExpress.start');
-    }
   },
   done() {
     if (this.server) {
@@ -68,6 +63,12 @@ module.exports = {
     };
   },
   events: {
+    'volante.configLoaded'() {
+      // trigger a start if autoStart == true
+      if (this.autoStart) {
+        this.$emit('VolanteExpress.start');
+      }
+    },
     'VolanteExpress.use'(...middleware) {
       this.$debug('adding middleware through event');
       this.app && this.app.use(...middleware);

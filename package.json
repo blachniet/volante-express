@@ -17,7 +17,7 @@
     "socket.io-client": "4.4.1"
   },
   "devDependencies": {
-    "volante": "^6.3.0",
+    "volante": "^6.6.0",
     "volante-console": "^4.1.0"
   },
   "keywords": [
