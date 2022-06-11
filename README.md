@@ -17,10 +17,11 @@ Volante Spokes are automatically loaded and instanced if they are installed loca
 
 ## Props
 
-Options are changed using the `VolanteExpress.update` event with an object:
+Options can be changed using the `VolanteExpress.update` event with an object:
 
 ```js
 hub.emit('VolanteExpress.update', {
+  autoStart: true,                 // automatically start
   bind: '127.0.0.1',               // bind address
   port: 3000,                      // server port
   https: false,                    // enable https mode
@@ -52,10 +53,19 @@ or specify any of the above in a `config.json` file as fields under a `VolanteEx
 
 In addition to native Volante log events, this modules also emits:
 
-- `VolanteExpress.pre-start(app)` - preferred way for other spokes to register their middleware, example:
+- `VolanteExpress.router(router)` - preferred way to register routes, call the supplied router param to get a router instance
   ```js
   events: {
-    'VolanteExpress.pre-start'(app) {
+    'VolanteExpress.router'(router) {
+      let r = router();
+      r.get('/').then((req, res) => {});
+    }
+  }
+  ```
+- `VolanteExpress.app(app)` - preferred way for other spokes to register their middleware, example:
+  ```js
+  events: {
+    'VolanteExpress.app'(app) {
       app.use(this.localRouter);
     }
   }
@@ -64,7 +74,7 @@ In addition to native Volante log events, this modules also emits:
 
 ### Logs
 
-Express.js HTTP requests are logged with the following structure:
+If logging is enabled, Express.js HTTP requests are logged to volante log events with the following content structure:
 
 ```js
 {
